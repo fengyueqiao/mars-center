@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="io.github.fengyueqiao.marscenter.infrastructure.tunnel.database.TemplateTunnel">
+    <sql id="ALL_COLUMNS">
+        id,
+        template_name,
+        profile,
+        creator,
+        modifier,
+        created_time,
+        modified_time,
+        is_deleted
+    </sql>
+
+    <sql id="COMMON_SELECT">
+        SELECT
+        <include refid="ALL_COLUMNS"/>
+        FROM mars_template_info
+    </sql>
+
+    <insert id="create" useGeneratedKeys="true" keyProperty="id" parameterType="TemplateDO">
+        INSERT INTO mars_template_info(
+        <include refid="ALL_COLUMNS"/>
+        ) VALUES (
+        null,
+        #{templateName},
+        #{profile},
+        #{creator},
+        #{modifier},
+        UNIX_TIMESTAMP(),
+        UNIX_TIMESTAMP(),
+        0
+        )
+    </insert>
+
+    <delete id="delete" parameterType="map">
+        UPDATE
+            mars_template_info
+        SET
+            is_deleted=1,
+            modifier = #{modifier},
+            modified_time = UNIX_TIMESTAMP()
+        WHERE
+            id = #{id} AND IS_DELETED = 0
+    </delete>
+
+    <select id="getById" resultType="TemplateDO" parameterType="map">
+        <include refid="COMMON_SELECT"/>
+        WHERE id = #{id}
+    </select>
+
+</mapper>
