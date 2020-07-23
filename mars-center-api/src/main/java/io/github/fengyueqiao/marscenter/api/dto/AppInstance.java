@@ -31,7 +31,7 @@ public class AppInstance {
     /**
      * 进程ID
      */
-    String pid;
+    Integer pid;
     /**
      * 应用版本
      */
