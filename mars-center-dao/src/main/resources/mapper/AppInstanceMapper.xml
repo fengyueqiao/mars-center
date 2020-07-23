@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="io.github.fengyueqiao.marscenter.dao.database.AppInstanceTunnel">
+
+    <sql id="ALL_COLUMNS">
+        id,
+        app_id,
+        node_id,
+        pid,
+        setting_state,
+        present_state,
+        version,
+
+        created_time,
+        modified_time,
+        is_deleted
+    </sql>
+
+    <insert id="create" parameterType="AppInstanceDO" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO mars_app_instance(
+        <include refid="ALL_COLUMNS"/>
+        ) VALUES (
+        null,
+        #{appId},
+        #{nodeId},
+        #{pid},
+        #{settingState},
+        #{presentState},
+        #{version},
+
+        UNIX_TIMESTAMP(NOW(3)) *1000,
+        UNIX_TIMESTAMP(NOW(3)) *1000,
+        0
+        )
+    </insert>
+
+    <update id="update" parameterType="AppInstanceDO">
+        UPDATE mars_app_instance SET modified_time = UNIX_TIMESTAMP(NOW(3)) *1000
+        <if test="pid != null">
+            ,pid = #{pid}
+        </if>
+        <if test="settingState != null">
+            ,setting_state = #{settingState}
+        </if>
+        <if test="presentState != null">
+            ,present_state = #{presentState}
+        </if>
+        <if test="version != null">
+            ,version = #{version}
+        </if>
+        where is_deleted = 0 AND id = #{id}
+    </update>
+
+
+    <select id="list" parameterType="string" resultType="AppInstanceDO">
+        SELECT
+        app_name,
+        node_name,
+        <include refid="ALL_COLUMNS"/>
+        FROM
+            mars_app_instance
+            INNER JOIN ( SELECT id AS app_info_id, name AS app_name FROM mars_app_info ) AS A ON app_info_id = app_id
+            INNER JOIN ( SELECT id AS node_info_id, name AS node_name FROM mars_node_info ) AS B ON node_info_id = node_id
+        WHERE is_deleted = 0
+        <if test="appId != null">
+            AND app_id = #{appId}
+        </if>
+        <if test="nodeId != null">
+            AND node_id = #{nodeId}
+        </if>
+    </select>
+
+    <select id="get" parameterType="string" resultType="AppInstanceDO">
+        SELECT
+        <include refid="ALL_COLUMNS"/>
+        FROM mars_app_instance
+        WHERE is_deleted = 0
+        AND app_id = #{appId}
+        AND node_id = #{nodeId}
+    </select>
+
+    <select id="getById" parameterType="string" resultType="AppInstanceDO">
+        SELECT
+        <include refid="ALL_COLUMNS"/>
+        FROM mars_app_instance
+        WHERE is_deleted = 0
+        AND id = #{id}
+    </select>
+
+    <delete id="delete" parameterType="map">
+        UPDATE mars_app_instance SET is_deleted = UNIX_TIMESTAMP(NOW(3)) *1000
+        WHERE is_deleted = 0
+        AND id = #{id}
+    </delete>
+
+</mapper>

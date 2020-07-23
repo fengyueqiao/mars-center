@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="io.github.fengyueqiao.marscenter.dao.database.FileInfoTunnel">
+
+    <sql id="ALL_COLUMNS">
+        id,
+        name,
+        path,
+        size,
+        md5sum,
+        is_exist,
+        is_zip,
+        is_full_path,
+
+        created_time,
+        modified_time,
+        is_deleted
+    </sql>
+
+    <select id="getById" parameterType="string" resultType="FileInfoDO">
+        SELECT
+        <include refid="ALL_COLUMNS"/>
+        FROM mars_file_info
+        WHERE is_deleted = 0
+        AND id = #{id}
+    </select>
+
+    <insert id="create" parameterType="FileInfoDO" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO mars_file_info(
+        <include refid="ALL_COLUMNS"/>
+        ) VALUES (
+        null,
+        #{name},
+        #{path},
+        #{size},
+        #{md5sum},
+        #{isExist},
+        #{isZip},
+        #{isFullPath},
+
+        UNIX_TIMESTAMP(NOW(3)) *1000,
+        UNIX_TIMESTAMP(NOW(3)) *1000,
+        0
+        )
+    </insert>
+
+    <delete id="delete" parameterType="map">
+        UPDATE mars_file_info SET is_deleted = UNIX_TIMESTAMP(NOW(3)) *1000
+        WHERE is_deleted = 0
+        AND id = #{id}
+    </delete>
+
+</mapper>

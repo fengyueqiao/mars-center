@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="io.github.fengyueqiao.marscenter.dao.database.AppInfoTunnel">
+
+    <sql id="ALL_COLUMNS">
+        id,
+        name,
+        type,
+        comment,
+        template_id,
+        group_id,
+
+        created_time,
+        modified_time,
+        is_deleted
+    </sql>
+
+    <insert id="create" parameterType="AppInfoDO" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO mars_app_info(
+        <include refid="ALL_COLUMNS"/>
+        ) VALUES (
+        null,
+        #{name},
+        #{type},
+        #{comment},
+        #{templateId},
+        #{groupId},
+
+        UNIX_TIMESTAMP(NOW(3)) *1000,
+        UNIX_TIMESTAMP(NOW(3)) *1000,
+        0
+        )
+    </insert>
+
+    <update id="update" parameterType="AppInfoDO">
+        UPDATE mars_app_info SET modified_time = UNIX_TIMESTAMP(NOW(3)) *1000
+        <if test="name != null">
+            ,name = #{name}
+        </if>
+        <if test="type != null">
+            ,type = #{type}
+        </if>
+        <if test="comment != null">
+            ,comment = #{comment}
+        </if>
+        <if test="templateId != null">
+            ,template_id = #{templateId}
+        </if>
+        <if test="groupId != null">
+            ,group_id = #{groupId}
+        </if>
+        where id = #{id} and is_deleted = 0
+    </update>
+
+    <select id="list" parameterType="string" resultType="AppInfoDO">
+        SELECT
+        <include refid="ALL_COLUMNS"/>
+        FROM mars_app_info
+        WHERE is_deleted = 0
+        <if test="groupId != null">
+            AND group_id = #{groupId}
+        </if>
+        <if test="name != null">
+            AND name like CONCAT('%',#{name},'%')
+        </if>
+    </select>
+
+    <select id="getByName" parameterType="string" resultType="AppInfoDO">
+        SELECT
+        <include refid="ALL_COLUMNS"/>
+        FROM mars_app_info
+        WHERE is_deleted = 0
+        AND name = #{name}
+    </select>
+
+    <select id="getById" parameterType="string" resultType="AppInfoDO">
+        SELECT
+        <include refid="ALL_COLUMNS"/>
+        FROM mars_app_info
+        WHERE is_deleted = 0
+        AND id = #{id}
+    </select>
+
+    <delete id="delete" parameterType="map">
+        UPDATE mars_app_info SET is_deleted = UNIX_TIMESTAMP(NOW(3)) *1000
+        WHERE is_deleted = 0
+        AND id = #{id}
+    </delete>
+
+</mapper>

@@ -1,0 +1,814 @@
+openapi: 3.0.0
+info:
+  description: ''
+  version: 1.0.0
+  title: 节点服务
+tags:
+  - name: app
+    description: 应用
+  - name: instance
+    description: 应用实例
+  - name: release
+    description: 应用发布版本
+  - name: node
+    description: 节点
+  - name: file
+    description: 文件
+#servers:
+#   - url: 'http://127.0.0.1:8080'
+paths:
+
+  /api/app/v1/createApp:
+    post:
+      tags:
+        - app
+      summary: 创建App
+
+      requestBody:
+        description: 请求参数
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                appInfo:
+                  type: object
+                  properties:
+                    name:
+                      type: string
+                      example: "AccountServer"
+                      description: 名称
+                    type:
+                      type: string
+                      example: "Deploy"
+                      description: 应用类型[Deploy,Control,Monitor]
+                    comment:
+                      type: string
+                      example: "用户服务"
+                      description: 名称
+                    templateId:
+                      type: string
+                      example: "1"
+                      description: 名称
+                    groupId:
+                      type: string
+                      example: "1"
+                      description: 名称
+      responses:
+        '200':
+          description: 成功操作
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Meta'
+
+  /api/app/v1/updateApp:
+    post:
+      tags:
+        - app
+      summary: 修改App
+
+      requestBody:
+        description: 请求参数
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                appInfo:
+                  type: object
+                  properties:
+                    id:
+                      type: string
+                      example: "1"
+                      description: 应用ID
+                    name:
+                      type: string
+                      example: "AccountServer"
+                      description: 名称
+                    type:
+                      type: string
+                      example: "Deploy"
+                      description: 应用类型[Deploy,Control,Monitor]
+                    comment:
+                      type: string
+                      example: "用户服务"
+                      description: 名称
+                    templateId:
+                      type: string
+                      example: "1"
+                      description: 名称
+                    groupId:
+                      type: string
+                      example: "1"
+                      description: 名称
+      responses:
+        '200':
+          description: 成功操作
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Meta'
+
+  /api/app/v1/deleteApp:
+    post:
+      tags:
+        - app
+      summary: 删除App
+
+      requestBody:
+        description: 请求参数
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                id:
+                  type: string
+                  example: "1"
+                  description: 应用ID
+      responses:
+        '200':
+          description: 成功操作
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Meta'
+
+  /api/app/v1/listApp:
+    post:
+      tags:
+        - app
+      summary: 查询App
+
+      requestBody:
+        description: 请求参数
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  example: null
+                  description: 名称
+                groupId:
+                  type: string
+                  example: 1
+                  description: 群组ID
+      responses:
+        '200':
+          description: 成功操作
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Meta'
+
+  /api/file/v1/createFile:
+    post:
+      tags:
+        - file
+      summary: 创建文件，对于使用外部链接的文件
+
+      requestBody:
+        description: 请求参数
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  example: "abc.png"
+                url:
+                  type: string
+                  example: http://baidu.com/asdf.png
+                size:
+                  type: integer
+                  example: 10121
+                  description: 分页大小
+      responses:
+        '200':
+          description: 成功操作
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Meta'
+
+  /api/file/v1/uploadFile:
+    post:
+      tags:
+        - file
+      summary: 上传文件
+
+      requestBody:
+        description: 请求参数
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                pathName:
+                  type: string
+                  example: "image"
+                file:
+                  type: string
+                  format: binary
+
+
+      responses:
+        '200':
+          description: 成功操作
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Meta'
+
+  /api/file/v1/downloadFile:
+    get:
+      tags:
+        - file
+      summary: 下载文件
+      parameters:
+        - in: query
+          name: filePath
+          required: true
+          schema:
+            type: string
+          description: 文件路径
+        - in: query
+          name: fileName
+          required: true
+          schema:
+            type: string
+          description: 下载后保存的文件名称
+
+
+      responses:
+        '200':
+          description: 成功操作
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Meta'
+
+  /api/instance/v1/listAppInstance:
+    post:
+      tags:
+        - instance
+      summary: 查询App实例
+
+      requestBody:
+        description: 请求参数
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                appId:
+                  type: string
+                  example: 1
+                  description: App id
+                nodeId:
+                  type: string
+                  example: 1
+                  description: Node id
+                nodeName:
+                  type: string
+                  example: 1
+                  description: Node Name
+      responses:
+        '200':
+          description: 成功操作
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Meta'
+
+  /api/instance/v1/startAppInstance:
+    post:
+      tags:
+        - instance
+      summary: 启动App实例
+
+      requestBody:
+        description: 请求参数
+        required: true
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                type: string
+                example: "1"
+                description: App实例id
+      responses:
+        '200':
+          description: 成功操作
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Meta'
+
+  /api/instance/v1/stopAppInstance:
+    post:
+      tags:
+        - instance
+      summary: 启动App实例
+
+      requestBody:
+        description: 请求参数
+        required: true
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                type: string
+                example: "1"
+                description: App实例id
+      responses:
+        '200':
+          description: 成功操作
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Meta'
+
+
+  /api/release/v1/createAppRelease:
+    post:
+      tags:
+        - release
+      summary: 创建App发布版本
+
+      requestBody:
+        description: 请求参数
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                appRelease:
+                  type: object
+                  properties:
+                    appId:
+                      type: string
+                      example: "1"
+                      description: appID
+                    fileId:
+                      type: string
+                      example: "1"
+                      description: 文件ID
+
+      responses:
+        '200':
+          description: 成功操作
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Meta'
+
+  /api/release/v1/deleteAppRelease:
+    post:
+      tags:
+        - release
+      summary: 删除App发布版本
+
+      requestBody:
+        description: 请求参数
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                id:
+                  type: string
+                  example: "1"
+                  description: ID
+
+      responses:
+        '200':
+          description: 成功操作
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Meta'
+
+  /api/release/v1/publishAppRelease:
+    post:
+      tags:
+        - release
+      summary: 发布App版本
+
+      requestBody:
+        description: 请求参数
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                appId:
+                  type: string
+                  example: "1"
+                  description: appID
+                version:
+                  type: string
+                  example: "201909101001"
+                  description: 版本号
+                settingState:
+                  type: string
+                  example: "Active"
+                  description: 设置状态
+                nodeIdList:
+                  type: array
+                  items:
+                    type: string
+                    example: 1
+                    description: node ID
+      responses:
+        '200':
+          description: 成功操作
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Meta'
+
+  /api/release/v1/listAppRelease:
+    post:
+      tags:
+        - release
+      summary: 查询App发布版本
+
+      requestBody:
+        description: 请求参数
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                appInfo:
+                  type: object
+                  properties:
+                    appId:
+                      type: string
+                      example: "1"
+                      description: appID
+
+      responses:
+        '200':
+          description: 成功操作
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Meta'
+
+  /api/template/v1/listTemplate:
+    post:
+      tags:
+        - template
+      summary: 查询模板
+
+      requestBody:
+        description: 请求参数
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                appInfo:
+                  type: object
+                  properties:
+                    name:
+                      type: string
+                      example: ""
+                      description: 名称模糊搜索
+
+      responses:
+        '200':
+          description: 成功操作
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Meta'
+
+  /api/template/v1/createTemplate:
+    post:
+      tags:
+        - template
+      summary: 创建模板
+
+      requestBody:
+        description: 请求参数
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                template:
+                  type: object
+                  properties:
+                    name:
+                      type: string
+                      example: "spring-boot-jar"
+                      description: 名称
+                    content:
+                      type: string
+                      example: "1"
+                      description: 内容
+
+      responses:
+        '200':
+          description: 成功操作
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Meta'
+
+  /api/template/v1/updateTemplate:
+    post:
+      tags:
+        - template
+      summary: 修改模板
+
+      requestBody:
+        description: 请求参数
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                template:
+                  type: object
+                  properties:
+                    id:
+                      type: string
+                      example: "1"
+                      description: ID
+                    name:
+                      type: string
+                      example: "spring-boot-jar"
+                      description: 名称
+                    content:
+                      type: string
+                      example: "1"
+                      description: 内容
+
+      responses:
+        '200':
+          description: 成功操作
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Meta'
+
+  /api/template/v1/deleteTemplate:
+    post:
+      tags:
+        - template
+      summary: 删除模板
+
+      requestBody:
+        description: 请求参数
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                id:
+                  type: string
+                  example: "1"
+                  description: ID
+
+      responses:
+        '200':
+          description: 成功操作
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Meta'
+
+  /api/template/v1/getTemplate:
+    post:
+      tags:
+        - template
+      summary: 获取模板详情
+
+      requestBody:
+        description: 请求参数
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                id:
+                  type: string
+                  example: "1"
+                  description: ID
+
+      responses:
+        '200':
+          description: 成功操作
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Meta'
+
+  /api/node/v1/deleteNode:
+    post:
+      tags:
+        - node
+      summary: 删除Node信息
+
+      requestBody:
+        description: 请求参数
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                id:
+                  type: string
+                  example: "1"
+                  description: ID
+
+      responses:
+        '200':
+          description: 成功操作
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Meta'
+
+  /api/node/v1/listNode:
+    post:
+      tags:
+        - node
+      summary: 查询Node信息
+
+      requestBody:
+        description: 请求参数
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  example: ""
+                  description: 节点名称
+
+      responses:
+        '200':
+          description: 成功操作
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Meta'
+
+  /api/node/v1/reportNodeStatus:
+    post:
+      tags:
+        - node
+      summary: 报告节点状态
+
+      requestBody:
+        description: 请求参数
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                nodeStatus:
+                  type: object
+                  properties:
+                    name:
+                      type: string
+                      example: "192.168.9.151"
+                      description: 节点名称
+                    endpoint:
+                      type: string
+                      example: "http://192.168.9.151:8090"
+                      description: 版本号
+                    version:
+                      type: string
+                      example: "1.1.0"
+                      description: 节点版本号
+                appStatusList:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      appName:
+                        type: string
+                        example: "AccountServer"
+                        description: 应用名称
+                      pid:
+                        type: string
+                        example: "1236"
+                        description: 进程ID
+                      presentState:
+                        type: string
+                        example: "active"
+                        description: 当前状态
+                      version:
+                        type: string
+                        example: "201903101123"
+
+      responses:
+        '200':
+          description: 成功操作
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Meta'
+
+
+components:
+  schemas:
+    Meta:
+      type: object
+      properties:
+        isSuccess:
+          type: boolean
+          description: true：成功 false：失败
+        errCode:
+          type: string
+          description: 错误码
+        errMessage:
+          type: string
+          description: 错误描述
+    PageListQry:
+      type: object
+      properties:
+        pageNum:
+          type: integer
+          example: 1
+          description: 分页编号，从1开始
+        pageSize:
+          type: integer
+          example: 10
+          description: 分页大小

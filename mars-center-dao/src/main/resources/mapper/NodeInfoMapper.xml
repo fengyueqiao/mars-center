@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="io.github.fengyueqiao.marscenter.dao.database.NodeInfoTunnel">
+
+    <sql id="ALL_COLUMNS">
+        id,
+        name,
+        endpoint,
+        version,
+        comment,
+        heartbeat_time,
+
+        created_time,
+        modified_time,
+        is_deleted
+    </sql>
+
+    <insert id="create" parameterType="NodeInfoDO" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO mars_node_info(
+        <include refid="ALL_COLUMNS"/>
+        ) VALUES (
+        null,
+        #{name},
+        #{endpoint},
+        #{version},
+        #{comment},
+        #{heartbeatTime},
+
+        UNIX_TIMESTAMP(NOW(3)) *1000,
+        UNIX_TIMESTAMP(NOW(3)) *1000,
+        0
+        )
+    </insert>
+
+    <update id="update" parameterType="NodeInfoDO">
+        UPDATE mars_node_info SET modified_time = UNIX_TIMESTAMP(NOW(3)) *1000
+        <if test="endpoint != null">
+            ,endpoint = #{endpoint}
+        </if>
+        <if test="version != null">
+            ,version = #{version}
+        </if>
+        <if test="comment != null">
+            ,comment = #{comment}
+        </if>
+        <if test="heartbeatTime != null">
+            ,heartbeat_time = #{heartbeatTime}
+        </if>
+        where name = #{name} and is_deleted = 0
+    </update>
+
+    <select id="list" parameterType="string" resultType="NodeInfoDO">
+        SELECT
+        <include refid="ALL_COLUMNS"/>
+        FROM mars_node_info
+        WHERE is_deleted = 0
+        <if test="name != null">
+            AND name like CONCAT('%',#{name},'%')
+        </if>
+    </select>
+
+    <select id="getByName" parameterType="string" resultType="NodeInfoDO">
+        SELECT
+        <include refid="ALL_COLUMNS"/>
+        FROM mars_node_info
+        WHERE is_deleted = 0
+        AND name = #{name}
+    </select>
+
+    <select id="getById" parameterType="string" resultType="NodeInfoDO">
+        SELECT
+        <include refid="ALL_COLUMNS"/>
+        FROM mars_node_info
+        WHERE is_deleted = 0
+        AND id = #{id}
+    </select>
+
+    <delete id="delete" parameterType="map">
+        UPDATE mars_node_info SET is_deleted = UNIX_TIMESTAMP(NOW(3)) *1000
+        WHERE is_deleted = 0
+        AND id = #{id}
+    </delete>
+
+</mapper>
